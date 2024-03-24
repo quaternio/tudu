@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch",
+    "devstart": "webpack serve --open",
     "build": "webpack"
   },
   "author": "Thomas Noel <thomas.c.noel@gmail.com>",
@@ -14,10 +16,15 @@
     "url": "https://github.com/quaternio/tudu.git"
   },
   "devDependencies": {
+    "html-loader": "^5.0.0",
+    "html-webpack-plugin": "^5.6.0",
     "webpack": "^5.90.3",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "jquery": "^3.7.1",
+    "lodash": "^4.17.21",
+    "tailwindcss": "^3.4.1"
   }
 }
