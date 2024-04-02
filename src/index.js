@@ -5,6 +5,7 @@ import html from "./index.html";
 
 class Task {
   constructor({
+    id,
     title, 
     description, 
     dueDate, 
@@ -14,6 +15,7 @@ class Task {
     category, 
     notes
   } = {}) {
+    this.id = id;
     this.title = title;
     this.description = description;
     this.dueDate = dueDate;
@@ -82,6 +84,7 @@ class Task {
 class Project {
   #tasks;
   constructor({
+    id,
     title, 
     description, 
     issuedTo, 
@@ -91,6 +94,7 @@ class Project {
     priority = 0
   } = {}) {
     this.#tasks = tasks;
+    this.id = id;
     this.priority = priority;
     this.title = title;
     this.description = description;
@@ -140,14 +144,57 @@ class Project {
   }
 }
 
-/** The main application logic; Tudu has a bunch of Project instances **/
-class Tudu {}
-
-class TaskRenderer {}
-
 /** ProjectRenderers have a bunch of TaskRenderers **/
-class ProjectRenderer {}
+class ProjectRenderer {
+  static render(project) {
+    $(".project-view").append(`<div class="project-${project.id}"></div>`);
+    const projectElem = $(`.project-${project.id}`);
+    projectElem.text("hi world");
+
+    // TODO: FIXME
+    const projectClasses = [
+      'bg-green-500'
+    ];
+
+    projectElem.addClass(projectClasses);
+  }
+}
+
+class TaskRenderer {
+  static render() {}
+}
 
 /** Renders the main application logic; TuduRenderer has a bunch of ProjectRenderers **/
-class TuduRenderer {}
+class TuduRenderer {
+  constructor() {
+    this.projectRenderer = new ProjectRenderer();
+  } 
+
+  renderProjects(projects) {
+    for (const project of projects) {
+      this.projectRenderer.render(project); 
+    }
+  }
+}
+
+
+/** The main application logic; Tudu has a bunch of Project instances and access
+  * to the Task and Project Renderers
+  **/
+class Tudu {}
+
+(() => {
+  const testProject = new Project({
+    id: 0,
+    title: "Test Project",
+    description: "This is not a test ;)",
+    issuedTo: "Thomas Noel",
+    issuer: "Thomas Noel",
+    dueDate: new Date(),
+    tasks: [],
+    priority: 10
+  });
+
+  ProjectRenderer.render(testProject);
+})();
 
