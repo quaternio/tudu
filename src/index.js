@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import $ from 'jQuery';
+const _ = require('lodash');
+const $ = require('jquery');
 
-import html from "./index.html";
+const html = require('./index.html');
 
 class Task {
   constructor({
@@ -147,18 +147,20 @@ class Project {
 /** ProjectRenderers have a bunch of TaskRenderers **/
 class ProjectRenderer {
   static render(project) {
-    $(".project-view").append(`<div class="project-${project.id}"></div>`);
+    $(".project-view").append(`
+      <div class="project-${project.id}"></div>
+    `);
     const projectElem = $(`.project-${project.id}`);
-    projectElem.text("hi world");
 
     // TODO: FIXME
     const projectClasses = [
-      'm-4',
+      'm-[1.0rem]',
       'bg-blue-500',
       'text-red-500'
     ];
-
     projectElem.addClass(projectClasses);
+
+    projectElem.text("hi world");
   }
 }
 
