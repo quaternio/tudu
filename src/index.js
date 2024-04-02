@@ -153,7 +153,9 @@ class ProjectRenderer {
 
     // TODO: FIXME
     const projectClasses = [
-      'bg-green-500'
+      'm-4',
+      'bg-blue-500',
+      'text-red-500'
     ];
 
     projectElem.addClass(projectClasses);
