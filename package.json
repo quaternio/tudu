@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch",
-    "devstart": "webpack serve --open",
     "build": "webpack",
+    "devstart": "webpack serve --open",
     "twstart": "npx tailwindcss -i ./src/style.css -o ./src/output.css --watch"
   },
   "author": "Thomas Noel <thomas.c.noel@gmail.com>",

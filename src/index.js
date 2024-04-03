@@ -146,10 +146,25 @@ class Project {
 
 /** ProjectRenderers have a bunch of TaskRenderers **/
 class ProjectRenderer {
-  static render(project) {
-    $(".project-view").append(`
-      <div class="project-${project.id}"></div>
+  _add_div(parent, class_id, text) {
+    parent.append(`
+      <div class="${class_id}">
+        ${text}
+      </div>
     `);
+
+    return $(`.${class_id}`);
+  }
+
+  _add_checkbox(parent, class_id, is_checked) {
+    let checked = is_checked ? " checked" : "";
+    parent.append(`<input type=checkbox class="${class_id}"${checked}>`);
+  }
+
+  _add_button_material() {}
+
+  render(project) {
+    $(".project-view").append(`<div class="project-${project.id}"></div>`);
     const projectElem = $(`.project-${project.id}`);
 
     // TODO: FIXME
@@ -162,11 +177,18 @@ class ProjectRenderer {
     ];
     projectElem.addClass(projectClasses);
 
-    projectElem.text(`${project.title}`);
+    projectElem.append(`<button class="project-${project.id}-expand">+</div>`);
+    this._add_div(projectElem, `project-${project.id}-title`, `${project.title}`);
+    this._add_div(projectElem, `project-${project.id}-owner`, `${project.issuedTo}`);
+    this._add_div(projectElem, `project-${project.id}-due-date`, `${project.dueDate.toLocaleDateString()}`);
+    this._add_div(projectElem, `project-${project.id}-priority`, `${project.priority}`);
+
+    this._add_checkbox(projectElem, `project-${project.id}-done`, project.done);
+    projectElem.append(`<button class="project-${project.id}-expand">...</div>`);
 
     // TODO: Add these divs inside of projectElem
-    // 1) "Expand" button ("plus" material design icon)
-    // 2) project.title = title;
+    // 1) [X] "Expand" button ([ ] "plus" material design icon)
+    // 2) [X] project.title = title;
     // 3) project.issuedTo = issuedTo;
     // 4) project.dueDate = dueDate;
     // 5) project.priority = priority;
@@ -213,6 +235,7 @@ class Tudu {}
     priority: 10
   });
 
-  ProjectRenderer.render(testProject);
+  projRenderer = new ProjectRenderer();
+  projRenderer.render(testProject);
 })();
 
