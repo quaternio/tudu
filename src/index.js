@@ -148,7 +148,7 @@ class Project {
 class ProjectRenderer {
   _add_div(parent, class_id, text) {
     parent.append(`
-      <div class="${class_id}">
+      <div class="${class_id} flex-auto">
         ${text}
       </div>
     `);
@@ -177,14 +177,14 @@ class ProjectRenderer {
     ];
     projectElem.addClass(projectClasses);
 
-    projectElem.append(`<button class="project-${project.id}-expand">+</div>`);
+    projectElem.append(`<button class="project-${project.id}-expand flex-auto">+</div>`);
     this._add_div(projectElem, `project-${project.id}-title`, `${project.title}`);
     this._add_div(projectElem, `project-${project.id}-owner`, `${project.issuedTo}`);
     this._add_div(projectElem, `project-${project.id}-due-date`, `${project.dueDate.toLocaleDateString()}`);
     this._add_div(projectElem, `project-${project.id}-priority`, `${project.priority}`);
 
     this._add_checkbox(projectElem, `project-${project.id}-done`, project.done);
-    projectElem.append(`<button class="project-${project.id}-expand">...</div>`);
+    projectElem.append(`<button class="project-${project.id}-expand flex-auto">...</div>`);
 
     // TODO: Add these divs inside of projectElem
     // 1) [X] "Expand" button ([ ] "plus" material design icon)
