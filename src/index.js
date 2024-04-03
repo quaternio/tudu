@@ -154,13 +154,27 @@ class ProjectRenderer {
 
     // TODO: FIXME
     const projectClasses = [
-      'm-[1.0rem]',
-      'bg-blue-500',
-      'text-red-500'
+      'flex',
+      'm-[0.5rem]',
+      'bg-teal-500',
+      'text-white',
+      'rounded-md'
     ];
     projectElem.addClass(projectClasses);
 
-    projectElem.text("hi world");
+    projectElem.text(`${project.title}`);
+
+    // TODO: Add these divs inside of projectElem
+    // 1) "Expand" button ("plus" material design icon)
+    // 2) project.title = title;
+    // 3) project.issuedTo = issuedTo;
+    // 4) project.dueDate = dueDate;
+    // 5) project.priority = priority;
+    // 6) project.done = false;
+    // 7) "More" button ("vertical ellipses" material design icon)
+    //        -> project.description = description;
+    //        -> project.issuer = issuer;
+    //        -> project.issueDate = new Date();
   }
 }
 
