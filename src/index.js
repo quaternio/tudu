@@ -148,7 +148,7 @@ class Project {
 class ProjectRenderer {
   _add_div(parent, class_id, text) {
     parent.append(`
-      <div class="${class_id} flex-auto">
+      <div class="${class_id}">
         ${text}
       </div>
     `);
@@ -164,27 +164,30 @@ class ProjectRenderer {
   _add_button_material() {}
 
   render(project) {
-    $(".project-view").append(`<div class="project-${project.id}"></div>`);
-    const projectElem = $(`.project-${project.id}`);
+    $(".project-view").append(`<div class="container-project-${project.id}"></div>`);
+    const projectElem = $(`.container-project-${project.id}`);
 
-    // TODO: FIXME
     const projectClasses = [
-      'flex',
-      'm-[0.5rem]',
+      'grid',
+      'grid-cols-7',
+      'justify-items-start',
+      'm-[0.25rem]',
       'bg-teal-500',
       'text-white',
       'rounded-md'
     ];
     projectElem.addClass(projectClasses);
 
-    projectElem.append(`<button class="project-${project.id}-expand flex-auto">+</div>`);
+    projectElem.append(`<button class="project-${project.id}-expand justify-self-center">+</div>`);
     this._add_div(projectElem, `project-${project.id}-title`, `${project.title}`);
     this._add_div(projectElem, `project-${project.id}-owner`, `${project.issuedTo}`);
     this._add_div(projectElem, `project-${project.id}-due-date`, `${project.dueDate.toLocaleDateString()}`);
     this._add_div(projectElem, `project-${project.id}-priority`, `${project.priority}`);
 
-    this._add_checkbox(projectElem, `project-${project.id}-done`, project.done);
-    projectElem.append(`<button class="project-${project.id}-expand flex-auto">...</div>`);
+    this._add_checkbox(projectElem, `project-${project.id}-done ml-[0.75rem]`, project.done);
+    projectElem.append(`<button class="project-${project.id}-expand justify-self-center">...</div>`);
+
+    //*********** TODO: Make buttons responsive *****************//
 
     // TODO: Add these divs inside of projectElem
     // 1) [X] "Expand" button ([ ] "plus" material design icon)
@@ -224,10 +227,11 @@ class TuduRenderer {
 class Tudu {}
 
 (() => {
-  const testProject = new Project({
+  projRenderer = new ProjectRenderer();
+  const project0 = new Project({
     id: 0,
-    title: "Test Project",
-    description: "This is not a test ;)",
+    title: "PostGIS DB Schema Init.",
+    description: "Figure out how to initialize PostGIS docker container with schema",
     issuedTo: "Thomas Noel",
     issuer: "Thomas Noel",
     dueDate: new Date(),
@@ -235,7 +239,19 @@ class Tudu {}
     priority: 10
   });
 
-  projRenderer = new ProjectRenderer();
-  projRenderer.render(testProject);
+  projRenderer.render(project0);
+
+  const project1 = new Project({
+    id: 1,
+    title: "Dockerize Slam Manager",
+    description: "Write Docker Compose File that Builds Slam Manager",
+    issuedTo: "Thomas Noel",
+    issuer: "Thomas Noel",
+    dueDate: new Date(),
+    tasks: [],
+    priority: 9
+  });
+
+  projRenderer.render(project1);
 })();
 

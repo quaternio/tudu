@@ -5,3 +5,13 @@
 html, body {
   height: 100%;
 }
+
+.header-row,
+[class^="container-project"] {
+  display: grid;
+  grid-template-columns: 3fr repeat(2, 5fr) repeat(2, 3fr) 2fr 1fr;
+}
+
+.header-expand {
+  font-size: 0.7rem;
+}
