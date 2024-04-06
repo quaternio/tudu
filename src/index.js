@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const $ = require('jquery');
+const { ProjectModal } = require("./lib/ProjectModal");
+const EventEmitter = require("events").EventEmitter;
 
 const html = require('./index.html');
 
@@ -164,7 +166,7 @@ class ProjectRenderer {
   _add_button_material() {}
 
   render(project) {
-    $(".project-view").append(`<div class="container-project-${project.id}"></div>`);
+    $("#project-view").append(`<div class="container-project-${project.id}"></div>`);
     const projectElem = $(`.container-project-${project.id}`);
 
     const projectClasses = [
@@ -172,7 +174,7 @@ class ProjectRenderer {
       'grid-cols-7',
       'justify-items-start',
       'm-[0.25rem]',
-      'bg-teal-500',
+      'bg-red-400',
       'text-white',
       'rounded-md'
     ];
@@ -181,7 +183,7 @@ class ProjectRenderer {
     projectElem.append(`<button class="project-${project.id}-expand justify-self-center">+</div>`);
     this._add_div(projectElem, `project-${project.id}-title`, `${project.title}`);
     this._add_div(projectElem, `project-${project.id}-owner`, `${project.issuedTo}`);
-    this._add_div(projectElem, `project-${project.id}-due-date`, `${project.dueDate.toLocaleDateString()}`);
+    this._add_div(projectElem, `project-${project.id}-due-date`, `${project.dueDate}`);
     this._add_div(projectElem, `project-${project.id}-priority`, `${project.priority}`);
 
     this._add_checkbox(projectElem, `project-${project.id}-done ml-[0.75rem]`, project.done);
@@ -220,13 +222,49 @@ class TuduRenderer {
   }
 }
 
-
 /** The main application logic; Tudu has a bunch of Project instances and access
   * to the Task and Project Renderers
   **/
-class Tudu {}
+class Tudu {
+  constructor() {
+    this._nextID = 0;
+    this._projectModal = new ProjectModal("#project-view", "#modal-new-project");
+    this._projectRenderer = new ProjectRenderer();
+
+    $(".new-project").on("click", (e) => {
+      // Prompt user with project form
+      this._projectModal.load(); 
+    }); 
+
+    this._projectModal.on("data_ready", (e) => {
+      let projectName = $("#project-name").val();
+      let owner = $("#owner").val();
+      let dueDate = $("#due-date").val();
+      let priority = $("#priority").val();
+
+      const project = new Project({
+        id: this._nextID, // FIXME HACK
+        title: projectName,
+        description: "",
+        issuedTo: owner,
+        issuer: "",
+        dueDate: dueDate,
+        tasks: [],
+        priority: +priority
+      });
+
+      this._projectRenderer.render(project); 
+      
+      this._nextID += 1;
+
+      $("#project-info-form").trigger("reset");
+    });
+  }
+}
 
 (() => {
+  const app = new Tudu();
+
   projRenderer = new ProjectRenderer();
   const project0 = new Project({
     id: 0,
@@ -234,7 +272,7 @@ class Tudu {}
     description: "Figure out how to initialize PostGIS docker container with schema",
     issuedTo: "Thomas Noel",
     issuer: "Thomas Noel",
-    dueDate: new Date(),
+    dueDate: "2024-04-05",
     tasks: [],
     priority: 10
   });
@@ -247,11 +285,13 @@ class Tudu {}
     description: "Write Docker Compose File that Builds Slam Manager",
     issuedTo: "Thomas Noel",
     issuer: "Thomas Noel",
-    dueDate: new Date(),
+    dueDate: "2024-04-05",
     tasks: [],
     priority: 9
   });
 
   projRenderer.render(project1);
+
+  app._nextID = 2; 
 })();
 
