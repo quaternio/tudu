@@ -242,6 +242,8 @@ class Tudu {
       let dueDate = $("#due-date").val();
       let priority = $("#priority").val();
 
+      if (!projectName || !owner || !dueDate || !priority) { return }
+
       const project = new Project({
         id: this._nextID, // FIXME HACK
         title: projectName,
