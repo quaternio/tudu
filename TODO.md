@@ -1,2 +1,17 @@
 ## TODO
-- [ ] Install Tailwind
+- [X] Header Bar
+- [X] Project Modal v1
+- [X] Project Ingestion
+- [X] Dark Color Theme
+- [ ] Material Design "+" and "..."
+- [ ] Project Deletion
+- [ ] Task Modal v1
+- [ ] Task Ingestion
+- [ ] Task Deletion
+- [ ] Task Ordering (Shift+Up, Shift+Down)?
+- [ ] Mobile (Media Queries)
+- [ ] Persistence (Postgres)?
+- [ ] Authentication?
+- [ ] Email Alerts for Tasks almost due?
+- [ ] Dockerize
+- [ ] Deploy (AWS?)
