@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const $ = require('jquery');
-const { ProjectModal } = require("./lib/ProjectModal");
-const EventEmitter = require("events").EventEmitter;
+const { ProjectModal, TaskModal } = require("./lib/Modals");
+const { TuduRenderer } = require("./lib/Renderers");
 
 const html = require('./index.html');
 
@@ -31,11 +31,12 @@ class Task {
 
     // Category enumeration
     this.categories = Object.freeze({
-      DEVELOPMENT: 0,
+      UNSPECIFIED: 0,
       MEETING: 1,
       MAINTENANCE: 2,
       OVERHEAD: 3,
-      DEPLOYMENT: 4
+      DEPLOYMENT: 4,
+      DEVELOPMENT: 5
     });
   }
 
@@ -108,11 +109,11 @@ class Project {
   }
 
   addTask(task) {
-    this.#tasks.append(task);
+    this.#tasks.push(task);
   }
 
   getOrderedTasks() {
-    return this.#tasks.toSorted((a, b) => a.priority - b.priority);
+    return this.#tasks.sort((a, b) => b.priority - a.priority);
   }
 
   markFinished() {
@@ -134,7 +135,7 @@ class Project {
     deadIdxs = [];
     this.#tasks.forEach((elem, idx) => {
       if (elem.done) {
-        deadIdxs.append(idx);
+        deadIdxs.push(idx);
       }
     });
 
@@ -144,81 +145,10 @@ class Project {
       this.#tasks.splice(idx, 1);
     });
   }
-}
 
-/** ProjectRenderers have a bunch of TaskRenderers **/
-class ProjectRenderer {
-  _add_div(parent, class_id, text) {
-    parent.append(`
-      <div class="${class_id}">
-        ${text}
-      </div>
-    `);
-
-    return $(`.${class_id}`);
-  }
-
-  _add_checkbox(parent, class_id, is_checked) {
-    let checked = is_checked ? " checked" : "";
-    parent.append(`<input type=checkbox class="${class_id}"${checked}>`);
-  }
-
-  _add_button_material() {}
-
-  render(project) {
-    $("#project-view").append(`<div class="container-project-${project.id}"></div>`);
-    const projectElem = $(`.container-project-${project.id}`);
-
-    const projectClasses = [
-      'grid',
-      'grid-cols-7',
-      'justify-items-start',
-      'm-[0.25rem]',
-      'bg-red-400',
-      'text-white',
-      'rounded-md'
-    ];
-    projectElem.addClass(projectClasses);
-
-    projectElem.append(`<button class="project-${project.id}-expand justify-self-center">+</div>`);
-    this._add_div(projectElem, `project-${project.id}-title`, `${project.title}`);
-    this._add_div(projectElem, `project-${project.id}-owner`, `${project.issuedTo}`);
-    this._add_div(projectElem, `project-${project.id}-due-date`, `${project.dueDate}`);
-    this._add_div(projectElem, `project-${project.id}-priority`, `${project.priority}`);
-
-    this._add_checkbox(projectElem, `project-${project.id}-done ml-[0.75rem]`, project.done);
-    projectElem.append(`<button class="project-${project.id}-expand justify-self-center">...</div>`);
-
-    //*********** TODO: Make buttons responsive *****************//
-
-    // TODO: Add these divs inside of projectElem
-    // 1) [X] "Expand" button ([ ] "plus" material design icon)
-    // 2) [X] project.title = title;
-    // 3) project.issuedTo = issuedTo;
-    // 4) project.dueDate = dueDate;
-    // 5) project.priority = priority;
-    // 6) project.done = false;
-    // 7) "More" button ("vertical ellipses" material design icon)
-    //        -> project.description = description;
-    //        -> project.issuer = issuer;
-    //        -> project.issueDate = new Date();
-  }
-}
-
-class TaskRenderer {
-  static render() {}
-}
-
-/** Renders the main application logic; TuduRenderer has a bunch of ProjectRenderers **/
-class TuduRenderer {
-  constructor() {
-    this.projectRenderer = new ProjectRenderer();
-  } 
-
-  renderProjects(projects) {
-    for (const project of projects) {
-      this.projectRenderer.render(project); 
-    }
+  // for debugging
+  get tasks() {
+    return this.#tasks;
   }
 }
 
@@ -226,26 +156,45 @@ class TuduRenderer {
   * to the Task and Project Renderers
   **/
 class Tudu {
+  #projects;
+
   constructor() {
-    this._nextID = 0;
+    this.#projects = {};
+    this._tuduRenderer = new TuduRenderer();
+
+    this._nextProjectID = 0;
+    this._nextTaskID = {};
     this._projectModal = new ProjectModal("#project-view", "#modal-new-project");
-    this._projectRenderer = new ProjectRenderer();
+    this._taskModal = new TaskModal("#project-view", "#modal-new-task");
 
     $(".new-project").on("click", (e) => {
       // Prompt user with project form
       this._projectModal.load(); 
     }); 
 
-    this._projectModal.on("data_ready", (e) => {
+    this._tuduRenderer.on("attach_add_ready", (data) => {
+      $(data.selector).off().on("click", (e) => {
+        // Trigger task modal
+        this._taskModal.load(data.id); // TODO
+      });
+    });
+    this._tuduRenderer.on("attach_expand_ready", (data) => {
+      $(data.selector).off().on("click", (e) => {
+        // Specify the id of the project whose tasks should be rendered
+        this._tuduRenderer.renderTasks(data.id, this.#projects[data.id]); // TODO
+      });
+    });
+
+    this._projectModal.on("project_data_ready", (e) => {
       let projectName = $("#project-name").val();
-      let owner = $("#owner").val();
-      let dueDate = $("#due-date").val();
-      let priority = $("#priority").val();
+      let owner = $("#project-owner").val();
+      let dueDate = $("#project-due-date").val();
+      let priority = $("#project-priority").val();
 
       if (!projectName || !owner || !dueDate || !priority) { return }
 
       const project = new Project({
-        id: this._nextID, // FIXME HACK
+        id: this._nextProjectID, // FIXME HACK
         title: projectName,
         description: "",
         issuedTo: owner,
@@ -255,19 +204,53 @@ class Tudu {
         priority: +priority
       });
 
-      this._projectRenderer.render(project); 
-      
-      this._nextID += 1;
+      this.#projects[this._nextProjectID] = project;
+      this._tuduRenderer.renderProjects(this.#projects);
 
-      $("#project-info-form").trigger("reset");
+      this._nextTaskID[`project_${project.id}`] = 0;
+      this._nextProjectID += 1;
     });
+
+    this._taskModal.on("task_data_ready", (projectID) => {
+      let taskName = $("#task-name").val();
+      let dueDate = $("#task-due-date").val();
+      let priority = $("#task-priority").val();
+
+      if (!taskName || !dueDate || !priority) { return }
+
+      const task = new Task({
+        id: this._nextTaskID[`project_${projectID}`], // FIXME HACK
+        title: taskName,
+        description: "",
+        dueDate: dueDate,
+        priority: +priority,
+        issuer: "",
+        issuedTo: "",
+        category: 0,
+        notes: ""
+      });
+
+      this.#projects[projectID].addTask(task);
+      console.log("projectID: ", projectID);
+      this._tuduRenderer.renderTasks(projectID, this.#projects[projectID]);
+      this._nextTaskID[`project_${projectID}`] += 1; 
+    });
+  }
+
+  // For debugging
+  addProject(project) {
+    this.#projects[project.id] = project;
+    this._nextTaskID[`project_${project.id}`] = 0;
+    this._nextProjectID = project.id + 1;
+  }
+  get projects() {
+    return this.#projects;
   }
 }
 
 (() => {
   const app = new Tudu();
 
-  projRenderer = new ProjectRenderer();
   const project0 = new Project({
     id: 0,
     title: "PostGIS DB Schema Init.",
@@ -278,8 +261,8 @@ class Tudu {
     tasks: [],
     priority: 10
   });
-
-  projRenderer.render(project0);
+  app.addProject(project0);
+  app._tuduRenderer.renderProjects(app.projects);
 
   const project1 = new Project({
     id: 1,
@@ -291,9 +274,7 @@ class Tudu {
     tasks: [],
     priority: 9
   });
-
-  projRenderer.render(project1);
-
-  app._nextID = 2; 
+  app.addProject(project1);
+  app._tuduRenderer.renderProjects(app.projects);
 })();
 

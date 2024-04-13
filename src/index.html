@@ -6,6 +6,9 @@
   <link rel="stylesheet" href="reset.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="output.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
   <script src="index.js" defer></script>
   <title>TÜDU</title>
 </head>
@@ -36,6 +39,7 @@
     </div>
   </div>
 
+  <!-- Project Modal -->
   <div id="modal-new-project" class="grid gap-4" style="display: none">
     <div id="header-new-project" class="grid mb-4 font-black"></div>
     <form id="project-info-form" class="grid gap-4" action=""> <!-- method="post"-->
@@ -45,16 +49,16 @@
           <input type="text" id="project-name" class="infield" name="project-name" required />
         </div>
         <div class="owner grid grid-cols-2">
-          <label for="owner">OWNED BY</label>
-          <input type="text" id="owner" class="infield" name="owner" required />
+          <label for="project-owner">OWNED BY</label>
+          <input type="text" id="project-owner" class="infield" name="project-owner" required />
         </div>
         <div class="due-date grid grid-cols-2">
-          <label for="due-date">DÜE DATE</label>
-          <input type="date" id="due-date" class="infield" name="due-date" required />
+          <label for="project-due-date">DÜE DATE</label>
+          <input type="date" id="project-due-date" class="infield" name="project-due-date" required />
         </div>
         <div class="priority grid grid-cols-2">
-          <label for="priority">PRIORITY</label>
-          <input type="number" min="1" max="10" placeholder="1" id="priority" class="infield" name="priority" required />
+          <label for="project-priority">PRIORITY</label>
+          <input type="number" min="1" max="10" placeholder="1" id="project-priority" class="infield" name="project-priority" required />
         </div>
       </div>
       <div class="submission grid grid-cols-2 gap-4 pl-4 pr-4">
@@ -71,7 +75,39 @@
     </form>
   </div>
 
+  <!-- Task Modal -->
+  <div id="modal-new-task" class="grid gap-4" style="display: none">
+    <div id="header-new-task" class="grid mb-4 font-black"></div>
+    <form id="task-info-form" class="grid gap-4" action=""> <!-- method="post"-->
+      <div class="fields grid grid-rows-4 gap-2">
+        <div class="task-name grid grid-cols-2">
+          <label for="task-name">TASK NAME</label>
+          <input type="text" id="task-name" class="infield" name="task-name" required />
+        </div>
+        <div class="due-date grid grid-cols-2">
+          <label for="task-due-date">DÜE DATE</label>
+          <input type="date" id="task-due-date" class="infield" name="task-due-date" required />
+        </div>
+        <div class="priority grid grid-cols-2">
+          <label for="task-priority">PRIORITY</label>
+          <input type="number" min="1" max="10" placeholder="1" id="task-priority" class="infield" name="task-priority" required />
+        </div>
+      </div>
+      <div class="submission grid grid-cols-2 gap-4 pl-4 pr-4">
+        <button id="task-submit" class="button-idle border-2 rounded-md hover:bg-slate-100" type="submit">
+          <div id="spinner-task-submit" class="hidden">
+            <img aria-hidden="true" class="animate-spin" src="assets/orbit.svg">
+          </div>
+          <div class="button-text">Submit</div>
+        </button>
+        <button id="task-cancel" class="border-2 rounded-md hover:bg-slate-100" type="reset">
+          <div class="button-text">Cancel</div>
+        </button>
+      </div>
+    </form>
+  </div>
+
   <!-- Add tailwind classes that you use in .js files here! -->
-  <div class="tw-helper m-[0.25rem] ml-[0.75rem] bg-red-400 rounded-md flex-row justify-self-center" style="display: none;"></div>
+  <div class="tw-helper bg-red-300 m-[0.25rem] mr-[0.75rem] ml-[1rem] ml-[0.75rem] pl-[0.75rem] pr-[0.75rem] bg-red-400 rounded-md flex-row justify-self-center" style="display: none;"></div>
 </body>
 </html>
