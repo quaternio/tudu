@@ -181,6 +181,8 @@ class TuduRenderer extends EventEmitter {
   }
 
   renderTasks(projectID, project) {
+    this.clearTasks();
+
     let tasks = project.getOrderedTasks();
     for (const task of tasks) {
       this.taskRenderer.render(projectID, task);

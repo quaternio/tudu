@@ -9,11 +9,11 @@
 - [X] Add button listeners
 - [X] Project Deletion
 - [X] Material Design Deletion
-- [ ] Add back +
-- [ ] Task Modal v1
-- [ ] Task Ingestion
-- [ ] Task Deletion
-- [ ] Task Ordering (Shift+Up, Shift+Down)?
+- [X] Add back +
+- [X] Task Modal v1
+- [X] Task Ingestion
+- [X] Task Deletion
+- [X] Task Ordering (Shift+Up, Shift+Down)?
 - [ ] Simple persistence
 
 ### v2
