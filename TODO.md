@@ -14,6 +14,7 @@
 - [X] Task Ingestion
 - [X] Task Deletion
 - [X] Task Ordering (Shift+Up, Shift+Down)?
+- [ ] Align Task Columns with Project Columns
 - [ ] Simple persistence
 
 ### v2
