@@ -15,6 +15,7 @@
 - [X] Task Deletion
 - [X] Task Ordering (Shift+Up, Shift+Down)?
 - [ ] Align Task Columns with Project Columns
+- [ ] Make Tasks Hideable (up arrow when tasks show, down when hidden)
 - [ ] Simple persistence
 
 ### v2
