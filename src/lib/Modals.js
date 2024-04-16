@@ -113,6 +113,7 @@ class TaskModal extends EventEmitter {
         });
 
         $("#task-submit").off().on("click", () => { 
+            console.log("TASK SBMTTTTED");
             // disable button so there's only one submission
             $("#task-submit").prop("disabled", true);
             this.on_submission(project_id);

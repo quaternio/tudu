@@ -180,6 +180,7 @@ class Tudu {
     });
     this._tuduRenderer.on("attach_expand_ready", (data) => {
       $(data.selector).off().on("click", (e) => {
+        console.log("HERE A");
         // Specify the id of the project whose tasks should be rendered
         this._tuduRenderer.renderTasks(data.id, this.#projects[data.id]); // TODO
       });
@@ -232,6 +233,7 @@ class Tudu {
 
       this.#projects[projectID].addTask(task);
       console.log("projectID: ", projectID);
+      console.log("HERE B");
       this._tuduRenderer.renderTasks(projectID, this.#projects[projectID]);
       this._nextTaskID[`project_${projectID}`] += 1; 
     });

@@ -92,7 +92,7 @@ class TaskRenderer {
 
   render(projectID, task) {
     // Create tas
-    $(`<div id="project-${projectID}-task-view" class="ml-[1rem]"></div>`).insertAfter(`.container-project-${projectID}`);
+    $(`<div id="project-${projectID}-task-${task.id}-view" class="ml-[1rem]"></div>`).insertAfter(`.container-project-${projectID}`);
     //$(`#project-${projectID}-task-view`).append(`
     //  <div class="header-row grid grid-cols-5 justify-items-start ml-[1rem] mb-[0.5rem] bg-indigo-400 dark:bg-blue-400 rounded-md m-1 p-1 pl-0">
     //    <div class="header-title text-white font-black">Title</div>
@@ -102,7 +102,7 @@ class TaskRenderer {
     //    <div class="header-delete text-white font-black"></div>
     //  </div>
     //`);
-    $(`#project-${projectID}-task-view`).append(`<div class="container-task-${task.id} bg-red-300"></div>`);
+    $(`#project-${projectID}-task-${task.id}-view`).append(`<div class="container-task-${task.id} bg-red-300"></div>`);
 
     const taskElem = $(`.container-task-${task.id}`);
 
@@ -181,9 +181,7 @@ class TuduRenderer extends EventEmitter {
   }
 
   renderTasks(projectID, project) {
-    console.log(project.tasks);
     let tasks = project.getOrderedTasks();
-    window.tasks = tasks;
     for (const task of tasks) {
       this.taskRenderer.render(projectID, task);
     }
