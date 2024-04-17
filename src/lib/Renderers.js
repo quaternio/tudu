@@ -92,10 +92,10 @@ class TaskRenderer {
 
   render(projectID, task) {
     // Create tas
-    $(`<div id="project-${projectID}-task-${task.id}-view" class="ml-[1rem]"></div>`).insertAfter(`.container-project-${projectID}`);
-    $(`#project-${projectID}-task-${task.id}-view`).append(`<div class="container-task-${task.id} bg-red-300"></div>`);
+    $(`<div id="project-task-view-${projectID}-${task.id}" class="ml-[1rem]"></div>`).insertAfter(`.container-project-${projectID}`);
+    $(`#project-task-view-${projectID}-${task.id}`).append(`<div class="container-project-task-${projectID}-${task.id} bg-red-300"></div>`);
 
-    const taskElem = $(`.container-task-${task.id}`);
+    const taskElem = $(`.container-project-task-${projectID}-${task.id}`);
 
     const taskClasses = [
       'grid',
@@ -141,7 +141,27 @@ class TuduRenderer extends EventEmitter {
   }
 
   clearTasks() {
-    $(`div[class^="container-task-"]`).remove();
+    //$(`div[class^="container-task-"]`).remove();
+    $(`div[id^="project-task-view-"]`).remove();
+  }
+
+  clearTasksByProject(projectID) {
+    $(`div[id^="project-task-view-${projectID}"]`).remove();
+
+    $(`.project-${projectID}-expand`).empty();
+    $(`.project-${projectID}-expand`).append(`
+      <span class="material-symbols-outlined">
+        arrow_drop_down
+      </span>
+    `);
+  }
+
+  triggerAttachExpandReady(projectID) {
+    this.emit("attach_expand_ready", {
+      id: projectID, 
+      selector: `.project-${projectID}-expand`
+      // project: project
+    }); 
   }
 
   getOrderedProjects(projects) {
@@ -172,12 +192,25 @@ class TuduRenderer extends EventEmitter {
   }
 
   renderTasks(projectID, project) {
-    this.clearTasks();
+    this.clearTasksByProject(projectID);
 
     let tasks = project.getOrderedTasks();
     for (const task of tasks) {
       this.taskRenderer.render(projectID, task);
     }
+
+    // Alter expand button
+    $(`.project-${projectID}-expand`).empty();
+    $(`.project-${projectID}-expand`).append(`
+      <span class="material-symbols-outlined">
+        arrow_drop_up
+      </span>
+    `);
+
+    this.emit("attach_contract_ready", {
+      id: projectID, 
+      selector: `.project-${projectID}-expand`
+    });
 
     $("#task-info-form").trigger("reset");
   }

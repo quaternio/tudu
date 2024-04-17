@@ -184,7 +184,14 @@ class Tudu {
         this._tuduRenderer.renderTasks(data.id, this.#projects[data.id]); // TODO
       });
     });
-
+    this._tuduRenderer.on("attach_contract_ready", (data) => {
+      $(data.selector).off().on("click", (e) => {
+        this._tuduRenderer.clearTasksByProject(data.id);
+        
+        this._tuduRenderer.triggerAttachExpandReady(data.id);
+      });
+    });
+      
     this._projectModal.on("project_data_ready", (e) => {
       this._tuduRenderer.clearTasks();
 
