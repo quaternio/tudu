@@ -15,8 +15,9 @@
 - [X] Task Deletion
 - [X] Task Ordering (Shift+Up, Shift+Down)?
 - [X] Align Task Columns with Project Columns
-- [ ] When adding new project, existing tasks don't render on top of project
-- [ ] Make Tasks Hideable (up arrow when tasks show, down when hidden)
+- [X] When adding new project, existing tasks don't render on top of project
+- [X] Make Tasks Hideable (up arrow when tasks show, down when hidden)
+- [ ] Fix task deletion bug
 - [ ] Simple persistence
 
 ### v2
