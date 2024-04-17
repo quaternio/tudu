@@ -175,7 +175,7 @@ class Tudu {
     this._tuduRenderer.on("attach_add_ready", (data) => {
       $(data.selector).off().on("click", (e) => {
         // Trigger task modal
-        this._taskModal.load(data.id); // TODO
+        this._taskModal.load(data.id);
       });
     });
     this._tuduRenderer.on("attach_expand_ready", (data) => {
@@ -186,6 +186,8 @@ class Tudu {
     });
 
     this._projectModal.on("project_data_ready", (e) => {
+      this._tuduRenderer.clearTasks();
+
       let projectName = $("#project-name").val();
       let owner = $("#project-owner").val();
       let dueDate = $("#project-due-date").val();

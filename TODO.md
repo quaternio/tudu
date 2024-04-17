@@ -14,7 +14,8 @@
 - [X] Task Ingestion
 - [X] Task Deletion
 - [X] Task Ordering (Shift+Up, Shift+Down)?
-- [ ] Align Task Columns with Project Columns
+- [X] Align Task Columns with Project Columns
+- [ ] When adding new project, existing tasks don't render on top of project
 - [ ] Make Tasks Hideable (up arrow when tasks show, down when hidden)
 - [ ] Simple persistence
 

@@ -23,7 +23,7 @@ class ProjectRenderer extends EventEmitter {
   }
 
   render(project) {
-    $("#project-view").append(`<div class="container-project-${project.id}"></div>`);
+    $("#project-view").append(`<div class="container-project-${project.id} pl-[1rem]"></div>`);
     const projectElem = $(`.container-project-${project.id}`);
 
     const projectClasses = [
@@ -93,15 +93,6 @@ class TaskRenderer {
   render(projectID, task) {
     // Create tas
     $(`<div id="project-${projectID}-task-${task.id}-view" class="ml-[1rem]"></div>`).insertAfter(`.container-project-${projectID}`);
-    //$(`#project-${projectID}-task-view`).append(`
-    //  <div class="header-row grid grid-cols-5 justify-items-start ml-[1rem] mb-[0.5rem] bg-indigo-400 dark:bg-blue-400 rounded-md m-1 p-1 pl-0">
-    //    <div class="header-title text-white font-black">Title</div>
-    //    <div class="header-due-date text-white font-black">Due Date</div>
-    //    <div class="header-priority text-white font-black">Priority</div>
-    //    <div class="header-done text-white font-black">Done</div>
-    //    <div class="header-delete text-white font-black"></div>
-    //  </div>
-    //`);
     $(`#project-${projectID}-task-${task.id}-view`).append(`<div class="container-task-${task.id} bg-red-300"></div>`);
 
     const taskElem = $(`.container-task-${task.id}`);
@@ -111,7 +102,7 @@ class TaskRenderer {
       'grid-cols-7', // Title, Due Date, Priority, Done, Delete
       'justify-items-start',
       'm-[0.25rem]',
-      'bg-red-400',
+      'bg-red-300',
       'text-white',
       'rounded-md'
     ];
