@@ -17,7 +17,8 @@
 - [X] Align Task Columns with Project Columns
 - [X] When adding new project, existing tasks don't render on top of project
 - [X] Make Tasks Hideable (up arrow when tasks show, down when hidden)
-- [ ] Fix task deletion bug
+- [X] Figure out why "plus" disappeared
+- [X] Fix task deletion bug
 - [ ] Simple persistence
 
 ### v2

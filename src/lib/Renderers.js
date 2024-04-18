@@ -67,14 +67,19 @@ class ProjectRenderer extends EventEmitter {
       id: project.id, 
       selector: `.project-${project.id}-add`
     });
-
-    $(`.project-${project.id}-delete`).on("click", (e) => {
-      projectElem.remove();
+    this.emit("attach_project_delete_ready", {
+      id: project.id,
+      selector: `.container-project-${project.id}`,
+      button_selector: `.project-${project.id}-delete`
     });
+
+    //$(`.project-${project.id}-delete`).on("click", (e) => {
+    //  projectElem.remove();
+    //});
   }
 }
 
-class TaskRenderer {
+class TaskRenderer extends EventEmitter {
   _add_div(parent, class_id, text) {
     parent.append(`
       <div class="${class_id}">
@@ -119,11 +124,20 @@ class TaskRenderer {
     taskElem.append(`
       <button title="Delete Task" class="task-${task.id}-delete justify-self-center mr-[0.75rem]">
         <span class="material-symbols-outlined">delete</span>
-      </button>`);
+      </button>
+    `);
 
-    $(`.task-${task.id}-delete`).on("click", (e) => {
-      taskElem.remove();
+    this.emit("attach_task_delete_ready", {
+      project_id: projectID,
+      task_id: task.id,
+      selector: `.container-project-task-${projectID}-${task.id}`,
+      button_selector: `.task-${task.id}-delete`
     });
+    
+
+    //$(`.task-${task.id}-delete`).on("click", (e) => {
+    //  taskElem.remove();
+    //});
     
   }
 }
@@ -186,6 +200,9 @@ class TuduRenderer extends EventEmitter {
       this.projectRenderer.on("attach_add_ready", (data) => {
         this.emit("attach_add_ready", data);
       });
+      this.projectRenderer.on("attach_project_delete_ready", (data) => {
+        this.emit("attach_project_delete_ready", data);
+      });
     }
 
     $("#project-info-form").trigger("reset");
@@ -197,6 +214,9 @@ class TuduRenderer extends EventEmitter {
     let tasks = project.getOrderedTasks();
     for (const task of tasks) {
       this.taskRenderer.render(projectID, task);
+      this.taskRenderer.on("attach_task_delete_ready", (data) => {
+        this.emit("attach_task_delete_ready", data);
+      });
     }
 
     // Alter expand button

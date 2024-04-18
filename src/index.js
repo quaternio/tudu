@@ -93,7 +93,7 @@ class Project {
     issuedTo, 
     issuer, 
     dueDate, 
-    tasks = [], 
+    tasks = {}, 
     priority = 0
   } = {}) {
     this.#tasks = tasks;
@@ -108,47 +108,25 @@ class Project {
     this.done = false;
   }
 
-  addTask(task) {
-    this.#tasks.push(task);
+  addTask(task, taskID) {
+    this.#tasks[taskID] = task;
+  }
+
+  deleteTask(taskID) {
+    delete this.#tasks[taskID];
   }
 
   getOrderedTasks() {
-    return this.#tasks.sort((a, b) => a.priority - b.priority);
+    let taskArray = [];
+    for (const id in this.#tasks) {
+      taskArray.push(this.#tasks[id]); 
+    }
+
+    return taskArray.sort((a,b) => a.priority - b.priority);
   }
 
   markFinished() {
     this.done = true;
-  }
-
-  /**
-    * In case a project is marked complete too soon
-    */
-  resuscitate() {
-    this.done = false;
-  }
-
-  editPriority(newPriority) {
-    this.priority = newPriority;
-  }
-
-  deleteDeadTasks() {
-    deadIdxs = [];
-    this.#tasks.forEach((elem, idx) => {
-      if (elem.done) {
-        deadIdxs.push(idx);
-      }
-    });
-
-    // Want to delete higher indices first
-    orderedDeadIdxs = deadIdxs.reverse();
-    orderedDeadIdxs.forEach((idx) => {
-      this.#tasks.splice(idx, 1);
-    });
-  }
-
-  // for debugging
-  get tasks() {
-    return this.#tasks;
   }
 }
 
@@ -191,6 +169,28 @@ class Tudu {
         this._tuduRenderer.triggerAttachExpandReady(data.id);
       });
     });
+    this._tuduRenderer.on("attach_project_delete_ready", (data) => {
+      //id: project.id,
+      //selector: `.project-${project.id}-add`
+      $(data.button_selector).off().on("click", (e) => {
+        $(data.selector).remove();
+        $(`[class^="container-project-task-${data.id}-"]`).remove();
+        
+        // Remove project from Tudu list
+        delete this.#projects[data.id];
+      });
+    });
+    this._tuduRenderer.on("attach_task_delete_ready", (data) => {
+      //project_id: projectID,
+      //task_id: task.id,
+      //selector: `.container-project-task-${projectID}-${task.id}`
+      $(data.button_selector).off().on("click", (e) => {
+        $(data.selector).remove();
+
+        // Remove the task from its project
+        this.#projects[data.project_id].deleteTask(data.task_id);
+      });
+    });
       
     this._projectModal.on("project_data_ready", (e) => {
       this._tuduRenderer.clearTasks();
@@ -227,8 +227,10 @@ class Tudu {
 
       if (!taskName || !dueDate || !priority) { return }
 
+      let newTaskID = this._nextTaskID[`project_${projectID}`];
+
       const task = new Task({
-        id: this._nextTaskID[`project_${projectID}`], // FIXME HACK
+        id: newTaskID,
         title: taskName,
         description: "",
         dueDate: dueDate,
@@ -239,7 +241,7 @@ class Tudu {
         notes: ""
       });
 
-      this.#projects[projectID].addTask(task);
+      this.#projects[projectID].addTask(task, newTaskID);
       this._tuduRenderer.renderTasks(projectID, this.#projects[projectID]);
       this._nextTaskID[`project_${projectID}`] += 1; 
     });
