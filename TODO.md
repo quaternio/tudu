@@ -19,7 +19,8 @@
 - [X] Make Tasks Hideable (up arrow when tasks show, down when hidden)
 - [X] Figure out why "plus" disappeared
 - [X] Fix task deletion bug
-- [ ] Simple persistence
+- [X] Simple persistence
+- [ ] Fix checkbox impersistence bug
 
 ### v2
 - [ ] Delete -> Options

@@ -15,7 +15,9 @@ class Task {
     issuer, 
     issuedTo, 
     category, 
-    notes
+    notes,
+    issueDate = new Date(),
+    done = false
   } = {}) {
     this.id = id;
     this.title = title;
@@ -26,8 +28,8 @@ class Task {
     this.issuedTo = issuedTo;
     this.category = category;
     this.notes = notes;
-    this.issueDate = new Date();
-    this.done = false;
+    this.issueDate = issueDate;
+    this.done = done;
 
     // Category enumeration
     this.categories = Object.freeze({
@@ -38,6 +40,22 @@ class Task {
       DEPLOYMENT: 4,
       DEVELOPMENT: 5
     });
+  }
+
+  serialize() {
+    return {
+      id: this.id,
+      title: this.title || "",
+      description: this.description || "",
+      dueDate: this.dueDate,
+      priority: this.priority || 0,
+      issuer: this.issuer || "",
+      issuedTo: this.issuedTo || "",
+      category: this.category || this.categories.UNSPECIFIED,
+      notes: this.notes || "",
+      issueDate: this.issueDate,
+      done: this.done
+    };
   }
 
   markFinished() {
@@ -94,9 +112,17 @@ class Project {
     issuer, 
     dueDate, 
     tasks = {}, 
-    priority = 0
+    priority = 0,
+    issueDate = new Date(),
+    done = false
   } = {}) {
-    this.#tasks = tasks;
+    this.#tasks = {}; //tasks;
+    if (tasks) {
+      for (const tid in tasks) {
+        this.#tasks[tid] = new Task(tasks[tid]);
+      }   
+    }
+
     this.id = id;
     this.priority = priority;
     this.title = title;
@@ -104,8 +130,28 @@ class Project {
     this.issuedTo = issuedTo;
     this.issuer = issuer;
     this.dueDate = dueDate;
-    this.issueDate = new Date();
-    this.done = false;
+    this.issueDate = issueDate;
+    this.done = done;
+  }
+
+  serialize() {
+    let serialTasks = {};
+    for (const tid in this.#tasks) {
+      serialTasks[tid] = this.#tasks[tid].serialize();
+    }
+
+    return {
+      tasks: serialTasks,
+      id: this.id,
+      priority: this.priority || 0,
+      title: this.title || "",
+      description: this.description || "",
+      issuedTo: this.issuedTo || "",
+      issuer: this.issuer || "",
+      dueDate: this.dueDate,
+      issueDate: this.issueDate,
+      done: this.done
+    };
   }
 
   addTask(task, taskID) {
@@ -136,12 +182,19 @@ class Project {
 class Tudu {
   #projects;
 
-  constructor() {
-    this.#projects = {};
+  constructor({projects, nextProjectID, nextTaskID} = {}) {
     this._tuduRenderer = new TuduRenderer();
 
-    this._nextProjectID = 0;
-    this._nextTaskID = {};
+    this.#projects = {};
+    if (projects) {
+      // rehydrate
+      for (const pid in projects) {
+        this.#projects[pid] = new Project(projects[pid]);
+      } 
+    }
+
+    this._nextProjectID = nextProjectID || 0;
+    this._nextTaskID = nextTaskID || {};
     this._projectModal = new ProjectModal("#project-view", "#modal-new-project");
     this._taskModal = new TaskModal("#project-view", "#modal-new-task");
 
@@ -178,6 +231,9 @@ class Tudu {
         
         // Remove project from Tudu list
         delete this.#projects[data.id];
+        
+        // Save
+        window.localStorage.setItem("app", JSON.stringify(this.serialize()));
       });
     });
     this._tuduRenderer.on("attach_task_delete_ready", (data) => {
@@ -189,7 +245,16 @@ class Tudu {
 
         // Remove the task from its project
         this.#projects[data.project_id].deleteTask(data.task_id);
+
+        // Save
+        window.localStorage.setItem("app", JSON.stringify(this.serialize()));
       });
+    });
+    this._tuduRenderer.on("checkbox_attached", (data) => {
+        $(data.selector).change((e) => {
+          // Save
+          window.localStorage.setItem("app", JSON.stringify(this.serialize()));
+        });
     });
       
     this._projectModal.on("project_data_ready", (e) => {
@@ -218,6 +283,9 @@ class Tudu {
 
       this._nextTaskID[`project_${project.id}`] = 0;
       this._nextProjectID += 1;
+
+      // Save
+      window.localStorage.setItem("app", JSON.stringify(this.serialize()));
     });
 
     this._taskModal.on("task_data_ready", (projectID) => {
@@ -244,7 +312,26 @@ class Tudu {
       this.#projects[projectID].addTask(task, newTaskID);
       this._tuduRenderer.renderTasks(projectID, this.#projects[projectID]);
       this._nextTaskID[`project_${projectID}`] += 1; 
+
+      // Save
+      window.localStorage.setItem("app", JSON.stringify(this.serialize()));
     });
+
+    // Render projects
+    this._tuduRenderer.renderProjects(this.#projects);
+  }
+
+  serialize() {
+    let projectsSerial = {};
+    for (const pid in this.#projects) {
+      projectsSerial[pid] = this.#projects[pid].serialize();
+    }
+
+    return {
+      projects: projectsSerial,
+      nextProjectID: this._nextProjectID,
+      nextTaskID: this._nextTaskID
+    };
   }
 
   // For debugging
@@ -259,32 +346,7 @@ class Tudu {
 }
 
 (() => {
-  const app = new Tudu();
-
-  const project0 = new Project({
-    id: 0,
-    title: "PostGIS DB Schema Init.",
-    description: "Figure out how to initialize PostGIS docker container with schema",
-    issuedTo: "Thomas Noel",
-    issuer: "Thomas Noel",
-    dueDate: "2024-04-05",
-    tasks: [],
-    priority: 10
-  });
-  app.addProject(project0);
-  app._tuduRenderer.renderProjects(app.projects);
-
-  const project1 = new Project({
-    id: 1,
-    title: "Dockerize Slam Manager",
-    description: "Write Docker Compose File that Builds Slam Manager",
-    issuedTo: "Thomas Noel",
-    issuer: "Thomas Noel",
-    dueDate: "2024-04-05",
-    tasks: [],
-    priority: 9
-  });
-  app.addProject(project1);
-  app._tuduRenderer.renderProjects(app.projects);
+  const app_state = JSON.parse(window.localStorage.getItem("app"));
+  const app = new Tudu(app_state ?? {});
 })();
 
