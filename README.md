@@ -2,7 +2,7 @@
 
 A simple webapp for project management
 
-![image](assets/TUDU.png)
+![App Preview](assets/TUDU.png)
 
 ---
 **Why?**
