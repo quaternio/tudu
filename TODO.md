@@ -20,7 +20,7 @@
 - [X] Figure out why "plus" disappeared
 - [X] Fix task deletion bug
 - [X] Simple persistence
-- [ ] Fix checkbox impersistence bug
+- [X] Fix checkbox impersistence bug
 
 ### v2
 - [ ] Delete -> Options

@@ -17,13 +17,14 @@ class ProjectRenderer extends EventEmitter {
     return $(`.${class_id}`);
   }
 
-  _add_checkbox(parent, class_id, is_checked) {
+  _add_checkbox(project, parent, class_id, is_checked) {
     let checked = is_checked ? " checked" : "";
     parent.append(`<input type=checkbox class="${class_id}"${checked}>`);
 
     let selector = "." + class_id.split(' ')[0];
 
-    this.emit("checkbox_attached", {
+    this.emit("project_checkbox_attached", {
+      project: project,
       selector: selector
     });
   }
@@ -58,7 +59,7 @@ class ProjectRenderer extends EventEmitter {
     this._add_div(projectElem, `project-${project.id}-due-date`, `${project.dueDate}`);
     this._add_div(projectElem, `project-${project.id}-priority`, `${project.priority}`);
 
-    this._add_checkbox(projectElem, `checkbox-project-${project.id}-done ml-[0.75rem]`, project.done);
+    this._add_checkbox(project, projectElem, `checkbox-project-${project.id}-done ml-[0.75rem]`, project.done);
     projectElem.append(`
       <button title="Delete Project" class="project-${project.id}-delete justify-self-center mr-[0.75rem]">
         <span class="material-symbols-outlined">delete</span>
@@ -96,13 +97,15 @@ class TaskRenderer extends EventEmitter {
     return $(`.${class_id}`);
   }
 
-  _add_checkbox(parent, class_id, is_checked) {
+  _add_checkbox(projectID, task, parent, class_id, is_checked) {
     let checked = is_checked ? " checked" : "";
     parent.append(`<input type=checkbox class="${class_id}"${checked}>`);
 
     let selector = "." + class_id.split(' ')[0];
 
-    this.emit("checkbox_attached", {
+    this.emit("task_checkbox_attached", {
+      projectID: projectID,
+      task: task,
       selector: selector
     });
   }
@@ -132,7 +135,7 @@ class TaskRenderer extends EventEmitter {
     this._add_div(taskElem, `task-${task.id}-due-date`, `${task.dueDate}`);
     this._add_div(taskElem, `task-${task.id}-priority`, `${task.priority}`);
 
-    this._add_checkbox(taskElem, `checkbox-project-task-${projectID}-${task.id}-done ml-[0.75rem]`, task.done);
+    this._add_checkbox(projectID, task, taskElem, `checkbox-project-task-${projectID}-${task.id}-done ml-[0.75rem]`, task.done);
     taskElem.append(`
       <button title="Delete Task" class="task-${task.id}-delete justify-self-center mr-[0.75rem]">
         <span class="material-symbols-outlined">delete</span>
@@ -214,8 +217,8 @@ class TuduRenderer extends EventEmitter {
       this.projectRenderer.on("attach_project_delete_ready", (data) => {
         this.emit("attach_project_delete_ready", data);
       });
-      this.projectRenderer.on("checkbox_attached", (data) => {
-        this.emit("checkbox_attached", data);
+      this.projectRenderer.on("project_checkbox_attached", (data) => {
+        this.emit("project_checkbox_attached", data);
       });
       this.projectRenderer.render(project); 
     }
@@ -231,8 +234,8 @@ class TuduRenderer extends EventEmitter {
       this.taskRenderer.on("attach_task_delete_ready", (data) => {
         this.emit("attach_task_delete_ready", data);
       });
-      this.projectRenderer.on("checkbox_attached", (data) => {
-        this.emit("checkbox_attached", data);
+      this.taskRenderer.on("task_checkbox_attached", (data) => {
+        this.emit("task_checkbox_attached", data);
       });
       this.taskRenderer.render(projectID, task);
     }

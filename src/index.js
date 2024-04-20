@@ -171,6 +171,15 @@ class Project {
     return taskArray.sort((a,b) => a.priority - b.priority);
   }
 
+  setTaskDoneStatus(taskID, done) {
+    console.log(this.#tasks[taskID]);
+    this.#tasks[taskID].done = done;
+  }
+
+  getTaskDoneStatus(taskID) {
+    return this.#tasks[taskID].done;
+  }
+
   markFinished() {
     this.done = true;
   }
@@ -250,8 +259,26 @@ class Tudu {
         window.localStorage.setItem("app", JSON.stringify(this.serialize()));
       });
     });
-    this._tuduRenderer.on("checkbox_attached", (data) => {
-        $(data.selector).change((e) => {
+    this._tuduRenderer.on("project_checkbox_attached", (data) => {
+        $(data.selector).off().change((e) => {
+          let current_status = this.#projects[data.project.id].done;
+          let new_status = !current_status;
+          this.#projects[data.project.id].done = new_status;
+
+          $(data.selector).prop("checked", new_status);
+
+          // Save
+          window.localStorage.setItem("app", JSON.stringify(this.serialize()));
+        });
+    });
+    this._tuduRenderer.on("task_checkbox_attached", (data) => {
+        $(data.selector).off().change((e) => {
+          let current_status = this.#projects[data.projectID].getTaskDoneStatus(data.task.id);
+          let new_status = !current_status;
+          this.#projects[data.projectID].setTaskDoneStatus(data.task.id, new_status);
+
+          $(data.selector).prop("checked", new_status);
+
           // Save
           window.localStorage.setItem("app", JSON.stringify(this.serialize()));
         });
