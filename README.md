@@ -16,3 +16,8 @@ be there waiting for you.
 
 The drawback of this approach is that loading your project list on different
 machines is currently not supported.
+
+---
+### Future Improvements
+
+See [TODO.md](https://github.com/quaternio/tudu/blob/main/TODO.md).

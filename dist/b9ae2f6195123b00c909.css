@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  height: 100%;
+}
+
+.blurred {
+  filter: blur(15px);
+}
+
+.header-row {
+  display: grid;
+  grid-template-columns: 4fr repeat(2, 5fr) 4fr 3fr 2fr 2fr;
+}
+
+[class^="container-project"] {
+  display: grid;
+  grid-template-columns: 2fr 2fr repeat(2, 5fr) 4fr 3fr 2fr 2fr;
+}
+
+[class^="container-task"] {
+  display: grid;
+  grid-template-columns: 2fr 2fr repeat(2, 5fr) 4fr 3fr 2fr 2fr;
+}
+
+.header-expand {
+  font-size: 0.7rem;
+}
+
+#modal-new-project {
+  display: grid;
+  grid-template-rows: 1fr 3fr 1fr;
+  gap: 1rem;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  background-color: rgb(38 50 70 / 0%);
+  padding: 1vw;
+  width: 40vw;
+  border-radius: 1rem;
+  border: solid;
+}
+
+#modal-new-task {
+  display: grid;
+  grid-template-rows: 1fr 3fr 1fr;
+  gap: 1rem;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  background-color: rgb(38 50 70 / 0%);
+  padding: 1vw;
+  width: 40vw;
+  border-radius: 1rem;
+  border: solid;
+}
+
+.infield {
+  border: solid;
+  border-color: rgb(228, 231, 235);
+  border-radius: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.button-waiting {
+  display: grid;
+  grid-template-columns: 1fr 3fr !important;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.button-idle {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+}
+
