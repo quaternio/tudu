@@ -4,6 +4,8 @@ A simple webapp for project management
 
 ![App Preview](/assets/TUDU2.png)
 
+Try it out [here](https://quaternio.github.io/tudu)!
+
 ---
 **Why?**
 - To build a crazy simple webapp for project and task tracking
